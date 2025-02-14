@@ -9,7 +9,9 @@ import (
 	"time"
 
 	"github.com/go-chi/chi/v5"
+	"github.com/go-chi/chi/v5/middleware"
 	"github.com/rkt02/urlshortener/internal/db"
+	"github.com/rkt02/urlshortener/internal/handlers"
 )
 
 func main() {
@@ -23,6 +25,11 @@ func main() {
 	//db.PrintURLTable(dbInstance)
 
 	router := chi.NewRouter()
+	router.Use(middleware.Logger)
+	handler := handlers.NewHandler(dbInstance)
+
+	router.Post("/shorten/{long}", handler.ShortenURL)
+	router.Get("/{short}", handler.Redirect)
 
 	server := &http.Server{
 		Addr:         ":8080",
@@ -35,4 +42,5 @@ func main() {
 	if err != nil {
 		log.Fatalf("Error Starting Server: %v", err)
 	}
+
 }
