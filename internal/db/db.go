@@ -79,7 +79,7 @@ func PrintURLTable(db *sql.DB) {
 			log.Fatalf("Scanning Retrieved rows%v", err)
 		}
 
-		fmt.Println(short_code)
+		fmt.Println(short_code, long_url)
 		//data = append(data, Url{short_code, long_url})
 	}
 }
