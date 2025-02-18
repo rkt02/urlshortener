@@ -28,6 +28,8 @@ func main() {
 	router.Use(middleware.Logger)
 	handler := handlers.NewHandler(dbInstance)
 
+	router.Get("/login", handlers.Login)
+
 	router.Post("/shorten/{long}", handler.ShortenURL)
 	router.Get("/{short}", handler.Redirect)
 
