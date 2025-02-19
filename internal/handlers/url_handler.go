@@ -83,7 +83,7 @@ func (h *Handler) Redirect(w http.ResponseWriter, r *http.Request) {
 			http.Error(w, "URL not found", http.StatusNotFound)
 		} else {
 			log.Printf("DB Retrieve Long From ShortError: %v", err)
-			http.Error(w, "Database Error", http.StatusInternalServerError)
+			http.Error(w, "Database Retrieve Error", http.StatusInternalServerError)
 		}
 		return
 	}
@@ -94,4 +94,32 @@ func (h *Handler) Redirect(w http.ResponseWriter, r *http.Request) {
 	}
 
 	http.Redirect(w, r, long_url, http.StatusFound)
+}
+
+func (h *Handler) Delete(w http.ResponseWriter, r *http.Request) {
+	long_url := chi.URLParam(r, "long")
+
+	if long_url == "" {
+		http.Error(w, "Empty Long Url for Delete", http.StatusBadRequest)
+		return
+	}
+
+	rowsDeleted, err := db.DeleteAllLong(h.DB, long_url)
+	if err != nil {
+		if err == sql.ErrNoRows {
+			log.Printf("Long URL Not Found: %v", err)
+			http.Error(w, "Long URL not found", http.StatusNotFound)
+		} else {
+			log.Printf("DB Delete by Long URL Error: %v", err)
+			http.Error(w, "DB Delete by Long URL Error", http.StatusInternalServerError)
+		}
+		return
+	}
+
+	//IF 0 rows deleted have a different response, no rows deleted does not give an error (the desired state is achieved)
+	//UPPDATE: To maintain idempotency, all delete operations produce the same end state, even if that means 0 rows were affected
+
+	log.Printf("%d Rows Deleted with URL: %s", rowsDeleted, long_url)
+	w.WriteHeader(http.StatusNoContent)
+
 }

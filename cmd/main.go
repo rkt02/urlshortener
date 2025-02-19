@@ -16,6 +16,7 @@ import (
 )
 
 func main() {
+	//TODO: This should also either be an environment variable or put into a secure data store
 	connstr := "postgres://postgres:1234@localhost:5432/urlshortdb?sslmode=disable"
 
 	dbInstance := db.OpenPostgresDB(connstr)
@@ -34,6 +35,7 @@ func main() {
 	router.Group(func(r chi.Router) {
 		r.Use(auth.JWTMiddleware)
 		r.Post("/shorten/{long}", handler.ShortenURL)
+		r.Delete("/remove/{long}", handler.Delete)
 	})
 
 	router.Get("/{short}", handler.Redirect)
