@@ -10,6 +10,7 @@ import (
 
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
+	"github.com/rkt02/urlshortener/internal/auth"
 	"github.com/rkt02/urlshortener/internal/db"
 	"github.com/rkt02/urlshortener/internal/handlers"
 )
@@ -30,7 +31,11 @@ func main() {
 
 	router.Get("/login", handlers.Login)
 
-	router.Post("/shorten/{long}", handler.ShortenURL)
+	router.Group(func(r chi.Router) {
+		r.Use(auth.JWTMiddleware)
+		r.Post("/shorten/{long}", handler.ShortenURL)
+	})
+
 	router.Get("/{short}", handler.Redirect)
 
 	server := &http.Server{
