@@ -124,3 +124,19 @@ func DeleteAllLong(db *sql.DB, long_url string) (int64, error) {
 
 	return count, nil
 }
+
+func DeleteShort(db *sql.DB, short_code string) (int64, error) {
+	query := `DELETE FROM url WHERE short_code = $1;`
+
+	res, err := db.Exec(query, short_code)
+	if err != nil {
+		return 0, err
+	}
+
+	count, err := res.RowsAffected()
+	if err != nil {
+		return 0, err
+	}
+
+	return count, nil
+}

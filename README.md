@@ -8,3 +8,5 @@ Environement Variables to set Prior to Execution:
 USERNAME : Admin
 PASSWORD : 42
 SECRET_KEY : supersecret
+REDIS_ADDRESS : localhost:6379
+REDIS_PASSWORD : ""
